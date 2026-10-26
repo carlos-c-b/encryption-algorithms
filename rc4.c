@@ -16,7 +16,7 @@
  * C = Ciphered message. In particular, C_i = P_i XOR R_i. C_i is the i-th byte of the array, i.e., the i-th character
  *
  *
- * 33 - 126 are actual characters in ASCII
+ *
  *
  * ---------------------
  *
@@ -37,9 +37,7 @@
  * Based on VPNs Illustrated by Jon C Stander (Chapter 3)
  */
 
-#define FIRST_CHAR 33
-#define LAST_CHAR 126
-#define ALPH_LENGTH (LAST_CHAR - FIRST_CHAR + 1)
+#define ALPH_LENGTH 255
 
 char *repeat(const char *k) {
 	char *K = malloc(ALPH_LENGTH + 1);
@@ -54,15 +52,15 @@ char *repeat(const char *k) {
 char *rc4(const char *P, const char *k) {
 	// Phase 1
 	int m = 0;	
-	char S[ALPH_LENGTH];
-	char *K = repeat(k);
+	unsigned char S[ALPH_LENGTH];
+	unsigned char *K = repeat(k);
 
-	for(int n = 0; n < ALPH_LENGTH; n++) S[n] = n + FIRST_CHAR;
+	for(int n = 0; n < ALPH_LENGTH; n++) S[n] = n;
 
 
 
 	for(int n = 0; n < ALPH_LENGTH; n++) {
-		m = ( m + (int)S[n] +  (int)K[n] ) % ALPH_LENGTH; // 0 <= m <= ALPH_LENGTH-1
+		m = ( m + S[n] +  K[n] ) % ALPH_LENGTH; // 0 <= m <= ALPH_LENGTH-1
 		swap_char(&S[n], &S[m]);
 	}
 
@@ -96,7 +94,7 @@ int main() {
 	char *C = rc4(P, k); // C = Ciphered text
 	char *D = rc4(C, k); // D = Deciphered text
 
-	printf("%s\n", C);
+	/* printf("%s\n", C); */
 	printf("%s\n", D);
 
 
